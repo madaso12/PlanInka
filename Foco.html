@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Estratégico - INKA / Aconcagua Expediciones</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #2c3e50;
+        }
+        .accent-color { color: #B85042; }
+        .accent-bg { background-color: #B85042; }
+        .secondary-color { color: #5A7D7C; }
+        .secondary-bg { background-color: #5A7D7C; }
+        .sidebar-item.active {
+            background-color: #B85042;
+            color: white;
+        }
+        .sidebar-item.active svg {
+            color: white;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #F8F7F4;
+            border: 4px solid #B85042;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Para gráficos más pequeños como el de Discrepancia */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        .chart-container-large { /* Para gráficos que necesitan más espacio como la tendencia mensual */
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+            .chart-container-large {
+                height: 450px;
+            }
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row">
+
+    <aside class="w-full md:w-64 bg-white shadow-lg md:min-h-screen p-4 md:p-6 sticky top-0 md:top-auto z-20">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold secondary-color">INKA</h1>
+            <p class="text-sm text-gray-500">Aconcagua Expediciones</p>
+        </div>
+        <nav>
+            <ul class="space-y-2">
+                <li><a href="#resumen" class="sidebar-item flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 secondary-color" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                    Resumen
+                </a></li>
+                <li><a href="#diagnostico" class="sidebar-item flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 secondary-color" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+                    Diagnóstico
+                </a></li>
+                <li><a href="#plan" class="sidebar-item flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 secondary-color" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V7.618a1 1 0 01.553-.894L9 4l6 3v10l-6 3z" /></svg>
+                    Plan de Acción
+                </a></li>
+                <li><a href="#vision" class="sidebar-item flex items-center p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 secondary-color" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    Visión a Futuro
+                </a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="flex-1 p-6 md:p-10">
+        
+        <section id="resumen" class="mb-16 scroll-mt-24">
+            <h2 class="text-3xl font-bold mb-2 accent-color">Resumen Ejecutivo</h2>
+            <p class="text-lg text-gray-600 mb-8">Un panorama del estado actual y la visión para optimizar la gestión financiera y operativa.</p>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="font-bold text-xl mb-2 secondary-color">Diagnóstico Clave</h3>
+                    <p class="text-gray-700">Identificamos áreas de oportunidad críticas en la gestión de ventas, la estructura de costos y el control del flujo de fondos, que actualmente limitan la visibilidad y eficiencia.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="font-bold text-xl mb-2 secondary-color">Plan de Acción</h3>
+                    <p class="text-gray-700">Proponemos un plan estructurado en 4 fases para estandarizar datos, simplificar procesos contables y automatizar reportes, sentando las bases para un crecimiento sostenible.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="font-bold text-xl mb-2 secondary-color">Resultado Esperado</h3>
+                    <p class="text-gray-700">El objetivo final es lograr una visión clara y en tiempo real de la rentabilidad por proyecto (EBITDA por Centro de Costos) y un control total sobre el flujo de caja multi-moneda.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="diagnostico" class="mb-16 scroll-mt-24">
+            <h2 class="text-3xl font-bold mb-8 accent-color">Diagnóstico Detallado</h2>
+            
+            <div class="space-y-12">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4 secondary-color">Área de Ventas y Facturación</h3>
+                    <p class="mb-4 text-gray-700">El principal desafío es la falta de una fuente de datos única y confiable, lo que genera inconsistencias significativas y dificulta tener una visión clara del total de ingresos.</p>
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6">
+                        <p class="font-bold text-amber-800">Análisis Temporada 24/25:</p>
+                        <p class="text-amber-700">Se observa una diferencia de <span class="font-bold">U$S 106.104</span> entre el sistema principal (Inka: U$S 3.555.443) y los registros de control (Vale: U$S 3.449.339). La hipótesis de que la diferencia corresponde a ventas de campamentos (U$S 429.275) no concilia los totales, lo que subraya la urgencia de unificar las fuentes de datos.</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6 items-center">
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2">Puntos de Dolor Identificados:</h4>
+                            <ul class="list-disc list-inside space-y-2 text-gray-600">
+                                <li>Inconsistencia en la fuente de datos principal (Sistema INKA vs. Planillas).</li>
+                                <li>Fragmentación de la información en archivos manuales por punto de venta.</li>
+                                <li>Modificaciones de datos no trazables que impiden la consolidación.</li>
+                                <li>Falta de integración del sistema ARCOS con el registro contable en Xubio.</li>
+                            </ul>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="salesDiscrepancyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4 secondary-color">Área de Contabilidad y Costos</h3>
+                    <p class="mb-6 text-gray-700">El plan de cuentas actual es excesivamente complejo, mezclando conceptos contables con centros de costos, lo que dificulta la imputación y el análisis.</p>
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2">Estructura Actual (Compleja)</h4>
+                            <div class="bg-red-50 border border-red-200 p-4 rounded-lg text-sm text-red-700 space-y-1">
+                                <p>› Sueldos - Administración</p>
+                                <p>› Sueldos - Comercialización</p>
+                                <p>› Sueldos y Jornales (OC)</p>
+                                <p>› Energía - Administración</p>
+                                <p>› Servicio de Energía, Gas (CDP)</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2">Estructura Propuesta (Simplificada)</h4>
+                            <div class="bg-green-50 border border-green-200 p-4 rounded-lg text-sm text-green-800">
+                                <p class="font-bold">Naturaleza de Gasto: <span class="font-normal">Sueldos y Jornales</span></p>
+                                <div class="flex items-center mt-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                    <div>
+                                        <p>→ Centro de Costos: Administración</p>
+                                        <p>→ Centro de Costos: Comercialización</p>
+                                        <p>→ Centro de Costos: Operación Campamentos</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-4 secondary-color">Área de Tesorería y Flujo de Fondos</h3>
+                    <p class="mb-6 text-gray-700">El control actual es detallado pero manual, intensivo en tiempo y propenso a errores, con una gestión compleja de múltiples monedas y medios de pago.</p>
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2">Flujo de Datos Actual</h4>
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                <p class="font-medium">Xubio → Excel</p>
+                                <p class="text-2xl font-thin">+</p>
+                                <p class="font-medium">Datos No Contabilizados → Excel</p>
+                                <p class="text-2xl font-thin">↓</p>
+                                <p class="font-bold accent-bg text-white py-1 px-3 rounded-full inline-block">Reporte Manual</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2">Flujo de Datos Propuesto</h4>
+                             <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                <p class="font-medium">Xubio (Export) + BBDD Comp. → Datos Unificados</p>
+                                <p class="text-2xl font-thin">↓</p>
+                                <p class="font-bold secondary-bg text-white py-1 px-3 rounded-full inline-block">Reporte Automatizado</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="plan" class="mb-16 scroll-mt-24">
+            <h2 class="text-3xl font-bold mb-8 accent-color">Plan de Trabajo Propuesto</h2>
+            <div class="relative pl-8 border-l-2 border-gray-300">
+                
+                <div class="timeline-item mb-12">
+                    <h3 class="text-xl font-bold secondary-color">Fase 1: Estandarización de Datos de Ventas</h3>
+                    <p class="text-sm text-gray-500 mb-2">Plazo: 2-4 semanas</p>
+                    <p class="text-gray-700">Establecer una única fuente de verdad para los ingresos, conciliando datos históricos y definiendo procesos claros para el futuro, incluyendo la integración de ARCOS.</p>
+                </div>
+
+                <div class="timeline-item mb-12">
+                    <h3 class="text-xl font-bold secondary-color">Fase 2: Reestructuración del Plan de Cuentas</h3>
+                    <p class="text-sm text-gray-500 mb-2">Plazo: 2-3 semanas</p>
+                    <p class="text-gray-700">Simplificar el plan de cuentas en Xubio, configurar los Centros de Costos de forma eficiente y capacitar al equipo en la nueva metodología de imputación.</p>
+                </div>
+
+                <div class="timeline-item mb-12">
+                    <h3 class="text-xl font-bold secondary-color">Fase 3: Implementación de BBDD Complementaria</h3>
+                    <p class="text-sm text-gray-500 mb-2">Plazo: 1-2 semanas</p>
+                    <p class="text-gray-700">Crear y poner en marcha una planilla de control para registrar todos los movimientos de flujo de fondos que no se formalizan en Xubio, asegurando que ningún movimiento quede fuera del análisis.</p>
+                </div>
+
+                <div class="timeline-item">
+                    <h3 class="text-xl font-bold secondary-color">Fase 4: Automatización de Reportes y Dashboards</h3>
+                    <p class="text-sm text-gray-500 mb-2">Plazo: 3-5 semanas</p>
+                    <p class="text-gray-700">Desarrollar una planilla maestra que unifique los datos y automatice el reporte de flujo de fondos. Crear dashboards interactivos (Power BI / Looker Studio) para el análisis de gestión que necesita la dirección.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="vision" class="scroll-mt-24">
+            <h2 class="text-3xl font-bold mb-8 accent-color">La Visión a Futuro: El Fruto del Trabajo</h2>
+            <p class="text-lg text-gray-600 mb-8">El objetivo final es transformar los datos en inteligencia de negocio, permitiendo una toma de decisiones ágil y estratégica.</p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-lg flex items-start space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 secondary-bg rounded-full flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">Rentabilidad por Centro de Costos</h3>
+                        <p class="text-gray-700">Podrán analizar el EBITDA de cada proyecto o área operativa (Campamentos, Comercial, etc.) para identificar qué partes del negocio son más rentables y dónde hay oportunidades de optimización.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg flex items-start space-x-4">
+                     <div class="flex-shrink-0">
+                        <div class="w-12 h-12 secondary-bg rounded-full flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">Flujo de Fondos en Tiempo Real</h3>
+                        <p class="text-gray-700">Tendrán una visión diaria y proyectada de la liquidez, discriminada por moneda (Pesos y Dólares) y por medio de pago, permitiendo una gestión financiera proactiva y precisa.</p>
+                    </div>
+                </div>
+                   <div class="bg-white p-6 rounded-xl shadow-lg flex items-start space-x-4">
+                     <div class="flex-shrink-0">
+                        <div class="w-12 h-12 secondary-bg rounded-full flex items-center justify-center">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">Dashboards de Gestión Interactivos</h3>
+                        <p class="text-gray-700">Toda esta información estará disponible en tableros visuales (Power BI / Looker Studio), permitiéndoles explorar los datos, filtrar por período o área, y tomar decisiones estratégicas basadas en información clara y confiable.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Chart.js para Discrepancia de Ventas (Datos fijos) - Este gráfico es estático
+        let salesDiscrepancyChart;
+        function initSalesDiscrepancyChart() {
+            const salesDiscrepancyCtx = document.getElementById('salesDiscrepancyChart').getContext('2d');
+            salesDiscrepancyChart = new Chart(salesDiscrepancyCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Ventas Control (Vale)', 'Ventas Sistema (Inka)'],
+                    datasets: [{
+                        label: 'Monto en U$S',
+                        data: [3449339, 3555443], // Datos fijos
+                        backgroundColor: [
+                            'rgba(90, 125, 124, 0.6)',
+                            'rgba(184, 80, 66, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(90, 125, 124, 1)',
+                            'rgba(184, 80, 66, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Discrepancia de Ventas: U$S 106.104', // Título actualizado
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false, 
+                            min: 3400000, 
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    return 'U$S ' + (value / 1000000).toFixed(2) + 'M';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Inicializar el gráfico estático y la navegación lateral
+        document.addEventListener('DOMContentLoaded', () => {
+            initSalesDiscrepancyChart(); // El gráfico estático de discrepancia
+            
+            // Resaltar el elemento activo de la barra lateral al desplazarse
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.sidebar-item');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100; // Offset para un mejor resaltado
+                    const sectionHeight = section.clientHeight;
+                    if (pageYOffset >= sectionTop && pageYOffset < sectionTop + sectionHeight) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.href.includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+
+            // Configuración inicial del enlace activo
+            const initialSection = window.location.hash ? window.location.hash.substring(1) : 'resumen';
+            navLinks.forEach(link => {
+                if (link.href.includes(initialSection)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
